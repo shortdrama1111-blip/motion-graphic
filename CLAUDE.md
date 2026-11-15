@@ -36,9 +36,14 @@ session that works here must follow this file.
 | `.claude/skills/` | Slash-command workflows: `/ingest-reference`, `/new-project`, `/add-skill` |
 
 ## Execution stack
-- **Code-driven animation:** Remotion (React → MP4) is the default engine for
-  2D/typographic/UI/infographic motion, rendered headless with the
-  pre-installed Chromium. Set up per project in `projects/<slug>/`.
+- **Code-driven animation:** Remotion 4 (React → MP4) is the default engine.
+  Point it at the pre-installed Chromium in `remotion.config.ts`
+  (`Config.setBrowserExecutable('/opt/pw-browsers/chromium-1243/chrome-linux64/chrome')`).
+  Fonts via `@fontsource/*` from npm (Google Fonts hosts are blocked here).
+  `projects/cyberoz-15s/` is the reference project: one-light carrier, morphs,
+  `beats.json` shared with the Python mixer, 16:9 + 1:1 from one codebase.
+- **Audio:** score + SFX synthesised in Python (`audio/mix.py` pattern:
+  numpy/scipy, pyloudnorm −14 LUFS, oversampled limiter).
 - **Video/audio ops:** ffmpeg/ffprobe (cuts, stitching, encoding, frame grabs).
 - **Image ops:** ImageMagick `convert`.
 - **NO Higgsfield generation.** The user has said: do not use Higgsfield to

@@ -1,0 +1,10 @@
+{
+  "_comment": "Shared timing (seconds) for picture and sound. Music: 115.66 BPM, bar 2.075 s, downbeats at 0.45 + k*2.075 (2.525, 4.6, 6.675, 8.75, 10.825, 12.9).",
+  "fps": 30, "duration": 15.0, "bpm": 115.66, "beat": 0.51875, "firstDownbeat": 0.45,
+  "s1": {"head": 0.15, "chipsStart": 0.45, "chipStep": 0.259375, "chipCount": 8, "out": 2.3},
+  "s2": {"in": 2.525, "line1": 2.6, "line2": 3.32, "suck": 4.33},
+  "s3": {"slam": 4.6, "headline": 4.9, "legsStart": 4.95, "legDur": 0.17, "orbitEnd": 7.2},
+  "s4": {"morph": 7.2, "headline": 7.71, "fail": 8.23, "instantly": 8.75, "chips": 9.0, "fix": 9.79, "out": 10.25},
+  "s5": {"morph": 10.3, "fill": 10.825, "full": 11.8625, "headline": 10.9, "everyDay": 11.35, "frameworks": 11.9, "breath": 12.35, "silence": 12.55},
+  "s6": {"hit": 12.9, "tagline": 13.45, "cta": 14.0, "url": 14.3}
+}
