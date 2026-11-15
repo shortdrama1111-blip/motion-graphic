@@ -144,3 +144,29 @@ Corrected single-take prompt:
 ```
 
 Permanent fix: in ElevenLabs add a Pronunciation Dictionary with alias rules `epara → e-para` and `QR → kju-ar`, then the normal spelling can stay in scripts.
+
+## 7. FINAL script — brand name never spoken (user decision 2026-11-16)
+
+The user does not want "epara" / "Më mirë se para" spoken at all (TTS stress keeps coming out wrong; correct stress is e-pa-RÁ, like Turkish "para"). Brand + tagline stay on screen only.
+
+```
+[tired, sighing] Prapë në radhë në bankë?
+[annoyed] Dhe dega mbyllet në tre…
+[short pause]
+[confident, punchy] Jo më!
+[excited, smiling] Tani gjithçka është në telefon.
+[short pause]
+[energetic, fast] Llogari pa degë? [shouting, excited] Po!
+[energetic, fast] Kartë virtuale, menjëherë? [shouting, excited] Po!
+[energetic, fast] Kartë fizike, edhe jashtë? [shouting, excited] Po!
+[energetic, fast] Me kju-ar apo me kartë? [shouting, excited] Po!
+[energetic, fast] Cash në çdo ATM? [shouting, excited] Po!
+[whispering, playful] Para shokut… në mesnatë? [whispering, excited] Po!
+[energetic, fast] Transferta me RIA? [shouting, excited] Po!
+[energetic, fast] Cashback? [shouting, excited] Po!
+[excited, building up] Edhe më shumë?
+[shouting, triumphant, very loud] PO!
+[long pause]
+[warm, confident] Gjithçka në një aplikacion.
+[friendly, upbeat] Shkarko falas.
+```

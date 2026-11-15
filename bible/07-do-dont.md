@@ -14,4 +14,4 @@
 - DO: approve the hardest 8 s as a look test before building the rest. [ref: moniepoint]
 - DO: read a 0.25 s contact sheet like a client before every long render. [ref: both]
 - DO: put the logo on a beat after a silence. [ref: moniepoint]
-
+- DO: ask early how the brand name is pronounced before generating any voice-over; TTS often gets the stress wrong in less-common languages (epara = e-pa-RÁ). Fallback: keep the brand on screen only. [feedback 2026-11-16]
