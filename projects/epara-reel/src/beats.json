@@ -1,0 +1,8 @@
+{
+  "_comment": "120 BPM: beat 0.5 s, bar 2 s, downbeats on even seconds. Items start on downbeats; every PO! lands on beat 3 of its bar (T+1.0).",
+  "fps": 30, "duration": 20.0, "bpm": 120, "beat": 0.5,
+  "hook": {"ticket": 0.05, "head1": 0.3, "serve": 1.5, "head2": 2.0, "closed": 3.0, "wipe": 3.5, "nomore": 3.8, "phone": 4.3},
+  "items": [5.0, 7.0, 9.0, 11.0, 13.0],
+  "rapid": {"start": 15.0, "chipStep": 0.25, "po": 16.5, "breath": 17.0},
+  "end": {"silence": 17.5, "hit": 18.0, "tagline": 18.5, "cta": 19.0}
+}
