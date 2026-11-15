@@ -9,7 +9,7 @@ ffprobe -v error -show_entries format=duration:stream=codec_type,width,height,r_
   -of default=nw=1 "$IN" > "$OUT/meta.txt"
 
 # Scene-change timestamps + one frame per scene
-ffmpeg -hide_banner -loglevel error -i "$IN" \
+ffmpeg -hide_banner -loglevel info -i "$IN" \
   -vf "select='eq(n,0)+gt(scene,$TH)',showinfo,scale=480:-2" -vsync vfr \
   "$OUT/scenes/scene_%03d.jpg" 2> "$OUT/showinfo.log" || true
 grep -o 'pts_time:[0-9.]*' "$OUT/showinfo.log" | cut -d: -f2 > "$OUT/cuts.txt" || true
