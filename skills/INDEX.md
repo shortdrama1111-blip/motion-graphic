@@ -4,4 +4,17 @@ Reusable motion techniques. One file per skill, named `kebab-case.md`, using `_T
 
 | Skill | Category | Engine | Summary |
 |---|---|---|---|
-| _(none yet)_ | | | |
+| [continuous-light-thread](continuous-light-thread.md) | carrier | Canvas 2D | One light that does every job; stroke+shadow+spill; screen-space hand-over, never two heads |
+| [deterministic-canvas-renderer](deterministic-canvas-renderer.md) | pipeline | Node+Playwright+ffmpeg | `renderFrame(t)` → PNG → ffmpeg; stills mode; per-scene renders |
+| [motion-blur-float](motion-blur-float.md) | finishing | any | Sub-frame averaging in Float32; 1/4–8/16 samples |
+| [threejs-continuous-camera](threejs-continuous-camera.md) | camera/3D | three.js | One `camAt(t)`, Bézier blends, log-space push, fog floor, DOF |
+| [type-rise-blur-exit](type-rise-blur-exit.md) | type | any | Mask rise with early alpha; in-place blur/track exit; underline variants |
+| [logo-reveal](logo-reveal.md) | brand | any | Wedge trace, soft-edge wipe, logo out of silence; pixel-exact rules |
+| [impact-hit](impact-hit.md) | accent | any | Decaying shake, scale punch, shards, shockwave, no flash |
+| [dot-matrix-map](dot-matrix-map.md) | data/world | Canvas/three.js | Dot-grid land, great-circle arcs, weighted city ripples |
+| [emerge-from-light](emerge-from-light.md) | transition | three.js | Object grows out of the light on the camera ray |
+| [match-white-handover](match-white-handover.md) | transition | three.js | Push into a card face → pixel-matched page |
+| [vo-first-timing](vo-first-timing.md) | timing/audio | ElevenLabs+whisper | Record VO first, word timestamps, `beats.json` |
+| [music-downbeat-edit](music-downbeat-edit.md) | audio | librosa | Edits on true downbeats, or score written in code |
+| [sfx-cue-mix-master](sfx-cue-mix-master.md) | audio | Python+ffmpeg | Every move has a sound; ducking; −14 LUFS / −1 dBTP |
+| [contact-sheet-review](contact-sheet-review.md) | QA | ffmpeg | 0.25 s contact sheets, read like a client |

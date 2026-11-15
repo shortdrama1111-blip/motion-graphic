@@ -21,10 +21,11 @@ session that works here must follow this file.
 ## Layout
 | Path | What lives there |
 |---|---|
-| `bible/` | The style bible: identity, color, type, motion, transitions, composition, sound, do/don't |
+| `bible/` | The style bible: identity, color, type, motion, transitions, composition, sound, do/don't, production method (`08-method.md`), style presets (`styles/`) |
 | `skills/` | Technique recipes (one `.md` per technique) + `INDEX.md` |
-| `references/videos/` | Raw reference videos (Git LFS) |
-| `references/images/` | Stills, frames, boards, logos, fonts samples (Git LFS) |
+| `references/videos/` | Raw reference videos |
+| `references/docs/` | Reference PDFs / written recipes |
+| `references/images/` | Stills, frames, boards, logos, fonts samples |
 | `references/breakdowns/` | One analysis `.md` per reference + extracted frames/contact sheets |
 | `ideas/` | Brief template and the backlog of ideas |
 | `projects/` | Actual productions |
@@ -52,5 +53,7 @@ session that works here must follow this file.
 5. Log any new rule/skill discovered back into `bible/` / `skills/`.
 
 ## Large files
-Videos, images, fonts, audio and project files are tracked with Git LFS (see
-`.gitattributes`). GitHub rejects non-LFS files over 100 MB.
+Git LFS is NOT used: the cloud sessions can't reach lfs.github.com. Commit
+media normally, keep each file under ~50 MB (GitHub rejects >100 MB), and
+compress reference videos (e.g. `ffmpeg -i in.mp4 -vf scale=-2:1080 -crf 26 out.mp4`)
+or host huge ones elsewhere and link them in the breakdown.
