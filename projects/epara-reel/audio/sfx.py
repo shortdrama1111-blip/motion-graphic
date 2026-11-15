@@ -158,36 +158,52 @@ place(thump(0.5, 55), h['nomore'], 0.9)                       # "Jo më."
 place(lp(boom(0.8, 60), 900), h['nomore'], 0.35)
 place(pop, h['phone'], 0.35)
 
-for i, T in enumerate(B['items']):
+for key, T in zip(B['itemKeys'], B['items']):
     place(whoosh(0.24, True, 600, 7000), T - 0.19, 0.5, 0.0)  # whip to next screen
     place(stamp(), T + 1.0, 0.95)                             # PO!
-    if i == 0:   # onboarding: three checks + done
+    if key == 'onboard':      # three checks + done
         for k in range(3):
             place(tick, T + 0.2 + k * 0.25, 0.55, -0.2 + 0.2 * k)
         place(success, T + 1.02, 0.45)
-    if i == 1:   # virtual card flips in, digits, shine
+    elif key == 'vcard':      # card flips in, shine
         place(switch, T + 0.0, 0.5)
         place(whoosh(0.35, False, 300, 3000), T + 0.0, 0.35)
-        for k in range(4):
-            place(hp(tick, 2500), T + 0.45 + k * 0.1, 0.3, 0.3)
+        place(pop, T + 0.55, 0.35)
         place(star, T + 1.05, 0.5, 0.3)
-    if i == 2:   # ATM: counter to 140+, cash out
+    elif key == 'pcard':      # card lands, plane flies, paid abroad
+        place(thump(0.3, 90), T + 0.42, 0.5)
+        place(whoosh(0.6, True, 300, 4000), T + 0.35, 0.4, -0.5)
+        place(chime, T + 0.8, 0.35, 0.3)
+    elif key == 'pay':        # QR scan beep, card tap, paid
+        place(lp(rng.standard_normal(int(0.45 * SR)), 900) * 0.25, T + 0.1, 0.4, -0.4)
+        place(beep(1760, 0.08, 0.2), T + 0.6, 0.45, -0.4)
+        place(whoosh(0.3, True, 800, 6000), T + 0.5, 0.35, 0.5)
+        place(beep(2093, 0.12, 0.1), T + 0.84, 0.45, 0.4)
+        place(success, T + 0.95, 0.4)
+    elif key == 'atm':        # counter to 140+, cash out
         place(counter, T + 0.1, 0.4)
         place(rustle(0.5), T + 1.0, 0.6, -0.1)
         place(ka_ching(), T + 1.08, 0.55)
-    if i == 3:   # send money: coin flies, received ping
-        place(pop, T + 0.3, 0.4, -0.6)
-        place(whoosh(0.55, True, 500, 5000), T + 0.3, 0.45)
-        place(chime, T + 0.9, 0.55, 0.5)
-    if i == 4:   # QR scan + paid
-        place(lp(rng.standard_normal(int(0.8 * SR)), 900) * 0.25, T + 0.1, 0.4)
-        place(beep(1760, 0.08, 0.2), T + 0.92, 0.5)
-        place(success, T + 1.0, 0.45)
+    elif key == 'night':      # button tap, comet whoosh, received ping + sparkle
+        place(tick, T + 0.2, 0.5, -0.5)
+        place(whoosh(0.6, True, 400, 7000), T + 0.3, 0.55)
+        place(bell(1568, 1.0), T + 0.86, 0.35, 0.5)
+        place(chime, T + 0.86, 0.45, 0.5)
+        place(star, T + 0.9, 0.4, 0.5)
+    elif key == 'ria':        # pins pop, euro flies, arrives
+        place(pop, T + 0.05, 0.35, -0.5)
+        place(pop, T + 0.15, 0.35, 0.5)
+        place(whoosh(0.6, True, 300, 5000), T + 0.25, 0.45)
+        place(chime, T + 0.9, 0.4, 0.3)
+    elif key == 'cashback':   # coins jump back, each lands
+        for k in range(5):
+            place(beep(1318 + 120 * k, 0.07, 0.0), T + 0.55 + k * 0.08, 0.3, -0.3 + 0.15 * k)
+        place(ka_ching(), T + 0.9, 0.4)
 
 r = B['rapid']
 place(whoosh(0.24, True, 600, 7000), r['start'] - 0.19, 0.5)
-for k in range(5):
-    place(pop, r['start'] + 0.25 + k * r['chipStep'], 0.45, -0.3 + 0.15 * k)
+for k in range(4):
+    place(pop, r['start'] + 0.25 + k * r['chipStep'], 0.45, -0.3 + 0.2 * k)
 place(stamp(), r['po'], 1.0)
 place(lp(boom(0.7, 55), 600), r['po'], 0.4)
 e = B['end']
