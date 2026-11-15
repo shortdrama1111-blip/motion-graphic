@@ -111,3 +111,36 @@ If "epara" is mispronounced, write it as "e-pára" in the voice text only.
 - Tempo ≈ 161.5 BPM (beat 0.3715 s; may read as ~81 BPM half-time), NOT 120 → the current picture grid does not line up with it.
 - Shape: steady driving section 0–58 s; change/breakdown 58–80 s; near-silences around 84–88 s and 96–100 s; ending 100–108 s.
 - Plan: pick a ~27–30 s excerpt and retime `src/beats.json` to the track's own beat grid (items every 6 beats ≈ 2.23 s, stamps on beats), instead of cutting the music to 120 BPM.
+
+## 6. Pronunciation fixes (after take 1, 2026-11-15)
+
+Take 1 (`audio/vo/take1_v4_s46_sim75.mp3`, 30.4 s, clean pauses between lines) had two errors:
+- **QR** must be said "kju-ar" → write `kju-ar` in the voice text.
+- **epara** is "e" + "para" (like e-money: e-para), not one run-together word → write `e-para` in the voice text.
+
+Corrected single-take prompt:
+
+```
+[tired, sighing] Prapë në radhë në bankë?
+[annoyed] Dhe dega mbyllet në tre…
+[short pause]
+[confident, punchy] Jo më!
+[excited, smiling] Me e-para, gjithçka në telefon.
+[short pause]
+[energetic, fast] Llogari pa degë? [shouting, excited] Po!
+[energetic, fast] Kartë virtuale, menjëherë? [shouting, excited] Po!
+[energetic, fast] Kartë fizike, edhe jashtë? [shouting, excited] Po!
+[energetic, fast] Me kju-ar apo me kartë? [shouting, excited] Po!
+[energetic, fast] Cash në çdo ATM? [shouting, excited] Po!
+[whispering, playful] Para shokut… në mesnatë? [whispering, excited] Po!
+[energetic, fast] Transferta me RIA? [shouting, excited] Po!
+[energetic, fast] Cashback? [shouting, excited] Po!
+[excited, building up] Edhe më shumë?
+[shouting, triumphant, very loud] PO!
+[long pause]
+[warm, confident] e-para.
+[smiling, proud] Më mirë se para!
+[friendly, upbeat] Shkarko falas.
+```
+
+Permanent fix: in ElevenLabs add a Pronunciation Dictionary with alias rules `epara → e-para` and `QR → kju-ar`, then the normal spelling can stay in scripts.
