@@ -1,6 +1,7 @@
-# 07 — Do / Don't
+# 07 — Lessons & Watch-outs
 
-> Grows from user feedback. Newest first. Format: `- DO/DON'T: rule — why [ref or feedback date]`
+> Lessons from references and user feedback. These are defaults with reasons, not laws:
+> break one when the idea calls for it, and say why. Format: `- DO/DON'T: lesson — why [ref or feedback date]`
 - DON'T: put a light brand on a dark keynote stage — it reads as "any tech ad". [ref: 2026-11-15-keemfinity-whatsapp-specad]
 - DON'T: use neon bloom / lens streaks on a light stage — they look like stickers. Use crisp strokes + contact shadow + spill. [ref: whatsapp]
 - DON'T: show two light heads at once, even for 0.1 s. [ref: whatsapp]

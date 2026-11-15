@@ -4,13 +4,15 @@ This repo is the **style bible + toolkit** for all motion graphics work. Every
 session that works here must follow this file.
 
 ## Golden rules
-1. **The bible wins.** Before designing or rendering anything, read `bible/`
-   (start with `bible/00-identity.md`). Never invent a look that contradicts it.
-   If the bible is silent on something, pick the option closest to the
-   references in `references/breakdowns/`, then note the decision so it can be
-   added to the bible.
-2. **References are evidence.** Rules in `bible/` should cite the reference
-   breakdown(s) they came from (e.g. `[ref: 2026-11-15-brand-promo]`).
+1. **The bible is a guide, not law.** It is a library of options, techniques and
+   lessons collected from references. Read `bible/` before designing, use it to
+   propose directions, and discuss trade-offs with the user. Breaking a
+   guideline is fine when the idea calls for it: say so and why. The user's
+   call on a project always wins over any reference.
+2. **References are inspiration, with their source.** Entries in `bible/` cite
+   the breakdown they came from (e.g. `[ref: 2026-11-15-brand-promo]`), so we
+   can talk about what that creator did, what worked, and what we'd do
+   differently.
 3. **Skills are reusable techniques.** Check `skills/INDEX.md` before building a
    technique from scratch. When a new technique is built, add it as a skill.
 4. **Projects are isolated.** Each piece of work lives in `projects/<slug>/`

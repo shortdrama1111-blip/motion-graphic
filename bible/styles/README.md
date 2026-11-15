@@ -1,7 +1,8 @@
 # Style Presets
 
-A preset is a complete look (palette, type, finishing, motion feel) that a
-project can pick. `08-method.md` applies to every preset. A project brief names
+A preset is a starting look (palette, type, finishing, motion feel) that a
+project can pick, mix, or bend. `08-method.md` offers lessons that may help any
+preset. A project brief names
 its preset; if none is named, ask or pick the one closest to the brand.
 
 | Preset | Feel | Engine | Source |

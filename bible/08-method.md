@@ -1,7 +1,8 @@
-# 08 — Production Method (the craft rules)
+# 08 — Production Method (lessons & options)
 
-> Style-agnostic rules for *how* a premium film is made. Apply to every project
-> regardless of look. Sources: [ref: 2026-11-15-keemfinity-whatsapp-specad],
+> What keemfinity did and why it worked, written as **guidance, not law**. Use
+> what fits the project, skip or change what doesn't, and discuss it. See
+> "Our take" at the bottom for where we might differ. Sources: [ref: 2026-11-15-keemfinity-whatsapp-specad],
 > [ref: 2026-11-15-keemfinity-moniepoint-listen].
 
 ## Concept
@@ -49,3 +50,11 @@
 6. **Contact sheet every 0.25 s (10 fps strip across every hand-over); read it like a client** and name every reason a frame looks cheap
 7. 30 fps 720p preview with full mix → fixes
 8. Final render once, mux, re-measure loudness after AAC encode
+
+## Our take — what to keep, question, or adapt
+- **Keep as strong defaults:** brand-owned opening, one-move transitions, sound on visible moves, the logo landing after a breath, contact-sheet review.
+- **Situational:** "zero hard cuts / one carrier" suits premium brand films; fast social edits, kinetic type and UGC often *want* hard cuts on the beat.
+- **Situational:** "never time-stretch the voice" is good practice; tiny stretches can be OK on quick social pieces.
+- **Scale to the job:** 95 cues, an 8-phase approval process and 2-hour 3D renders are right for a portfolio piece, overkill for a quick test. Pick the depth per project.
+- **Light vs dark stage:** "light, not dark" was right *for WhatsApp*; plenty of brands and styles live on dark.
+- **Real brands:** spec ads of real brands are portfolio-only and need official files + disclaimers; for anything public prefer fictional or client-owned brands.
