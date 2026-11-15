@@ -41,9 +41,10 @@ session that works here must follow this file.
   pre-installed Chromium. Set up per project in `projects/<slug>/`.
 - **Video/audio ops:** ffmpeg/ffprobe (cuts, stitching, encoding, frame grabs).
 - **Image ops:** ImageMagick `convert`.
-- **Generative footage/3D/product shots:** Higgsfield and ElevenLabs connectors
-  (video, image, SFX, voice) when a shot can't be built in code. Generation
-  costs credits — confirm long/expensive runs with the user first.
+- **NO Higgsfield generation.** The user has said: do not use Higgsfield to
+  generate anything (images, video, audio). Build visuals in code.
+- **ElevenLabs** (voice/SFX) only when the user asks for it; it costs credits,
+  so confirm before generating.
 - Default deliverables unless the bible says otherwise: 1080x1920 (9:16) and
   1920x1080 (16:9), 30 fps, H.264 MP4, AAC audio.
 
