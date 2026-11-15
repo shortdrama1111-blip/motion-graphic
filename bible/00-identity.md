@@ -1,6 +1,6 @@
 # 00 — Identity
 
-> Status: EMPTY — fill from the user's references. Cite sources as `[ref: <breakdown-slug>]`.
+> Status: OPEN BY DESIGN — this repo is a library of ALL possible looks (see `styles/`), not one house style. Each project picks a preset in its brief. Fill this only if a house brand is defined later.
 
 ## One-line essence
 _What does this style feel like in one sentence?_

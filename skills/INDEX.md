@@ -18,3 +18,5 @@ Reusable motion techniques. One file per skill, named `kebab-case.md`, using `_T
 | [music-downbeat-edit](music-downbeat-edit.md) | audio | librosa | Edits on true downbeats, or score written in code |
 | [sfx-cue-mix-master](sfx-cue-mix-master.md) | audio | Python+ffmpeg | Every move has a sound; ducking; −14 LUFS / −1 dBTP |
 | [contact-sheet-review](contact-sheet-review.md) | QA | ffmpeg | 0.25 s contact sheets, read like a client |
+| [ten-basic-moves](ten-basic-moves.md) | primitives | any | Rise, pop, count-up, tick, typewriter, slide, blur-in, punch-in, reframe, bar fill |
+| [footage-overlay-rules](footage-overlay-rules.md) | layout/timing | whisper+any | Word-timed graphics over talking-head video, safe zones, SFX |

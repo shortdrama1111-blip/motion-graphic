@@ -29,6 +29,7 @@ session that works here must follow this file.
 | `references/breakdowns/` | One analysis `.md` per reference + extracted frames/contact sheets |
 | `ideas/` | Brief template and the backlog of ideas |
 | `projects/` | Actual productions |
+| `assets/` | Shared fonts (OFL) and SFX usable in any project |
 | `tools/` | Scripts (ingest/analyze references, render helpers) |
 | `.claude/skills/` | Slash-command workflows: `/ingest-reference`, `/new-project`, `/add-skill` |
 
