@@ -158,9 +158,10 @@ place(thump(0.5, 55), h['nomore'], 0.9)                       # "Jo më."
 place(lp(boom(0.8, 60), 900), h['nomore'], 0.35)
 place(pop, h['phone'], 0.35)
 
-for key, T in zip(B['itemKeys'], B['items']):
-    place(whoosh(0.24, True, 600, 7000), T - 0.19, 0.5, 0.0)  # whip to next screen
-    place(stamp(), T + 1.0, 0.95)                             # PO!
+for it in B['items']:
+    key, T = it['key'], it['po'] - 1.0                       # animation clock: PO! at T + 1.0
+    place(whoosh(0.24, True, 600, 7000), it['T'] - 0.19, 0.5, 0.0)  # whip to next screen
+    place(stamp(), it['po'], 0.95)                            # PO! on the spoken 'Po!'
     if key == 'onboard':      # three checks + done
         for k in range(3):
             place(tick, T + 0.2 + k * 0.25, 0.55, -0.2 + 0.2 * k)
@@ -203,7 +204,7 @@ for key, T in zip(B['itemKeys'], B['items']):
 r = B['rapid']
 place(whoosh(0.24, True, 600, 7000), r['start'] - 0.19, 0.5)
 for k in range(4):
-    place(pop, r['start'] + 0.25 + k * r['chipStep'], 0.45, -0.3 + 0.2 * k)
+    place(pop, r['start'] + r['chipStart'] + k * r['chipStep'], 0.45, -0.3 + 0.2 * k)
 place(stamp(), r['po'], 1.0)
 place(lp(boom(0.7, 55), 600), r['po'], 0.4)
 e = B['end']

@@ -136,8 +136,9 @@ const Hook: React.FC<{t: number}> = ({t}) => {
 // "Jo më." panel that wipes up over the queue
 const NoMore: React.FC<{t: number}> = ({t}) => {
   const h = B.hook;
-  if (t < h.wipe || t > 5.05) return null;
-  const a = eio3(seg(t, h.wipe, h.wipe + 0.28)), b = eio3(seg(t, 4.83, 5.03));
+  const out = B.items[0].T - 0.17;
+  if (t < h.wipe || t > out + 0.22) return null;
+  const a = eio3(seg(t, h.wipe, h.wipe + 0.28)), b = eio3(seg(t, out, out + 0.2));
   return (
     <div style={{position: 'absolute', inset: 0, background: GRAD, transform: `translateY(${(1 - a) * H - b * H}px)`, borderRadius: lerp(120, 0, a)}}>
       <Words text="Jo më." t={t} t0={h.nomore} size={210} y={720} color="#fff" />
@@ -447,13 +448,14 @@ const ITEMS: Record<string, {q: string; anim: React.FC<{t: number; T: number}>; 
 };
 
 const Item: React.FC<{t: number; i: number}> = ({t, i}) => {
-  const T = B.items[i], it = ITEMS[B.itemKeys[i]], A = it.anim;
+  const {T, po, key} = B.items[i], it = ITEMS[key], A = it.anim;
+  const next = i + 1 < B.items.length ? B.items[i + 1].T : B.rapid.start;
   return (
-    <Screen t={t} T={T}>
+    <Screen t={t} T={T} outAt={next - 0.17}>
       {it.dark ? <NightBg t={t} /> : null}
       <Words text={it.q} t={t} t0={T} size={88} y={360} color={it.dark ? '#fff' : C.navy} accent={it.dark ? '#FF6B7A' : C.coral} />
-      <A t={t} T={T} />
-      <Stamp t={t} t0={T + 1.0} x={it.stamp?.[0]} y={it.stamp?.[1]} scale={it.scale} />
+      <A t={t} T={po - 1.0} />
+      <Stamp t={t} t0={po} x={it.stamp?.[0]} y={it.stamp?.[1]} scale={it.scale} />
     </Screen>
   );
 };
@@ -469,7 +471,7 @@ const Rapid: React.FC<{t: number}> = ({t}) => {
       <div style={{position: 'absolute', inset: 0, opacity: 1 - br, filter: br > 0 ? `blur(${14 * br}px)` : undefined, transform: `scale(${1 - 0.04 * br})`}}>
         <Words text="Edhe *më shumë?*" t={t} t0={r.start} size={92} y={330} />
         {chips.map((c, i) => (
-          <Pop key={i} t={t} t0={r.start + 0.25 + i * r.chipStep} x={CX} y={590 + i * 140} from={0.6}>
+          <Pop key={i} t={t} t0={r.start + r.chipStart + i * r.chipStep} x={CX} y={590 + i * 140} from={0.6}>
             <div style={{display: 'flex', alignItems: 'center', gap: 20, padding: '22px 34px', borderRadius: 999, background: '#fff', border: `1px solid ${C.line}`,
               boxShadow: '0 18px 36px rgba(17,21,36,0.09)', fontFamily: F, fontWeight: 700, fontSize: 38, color: C.navy, whiteSpace: 'nowrap'}}>
               <Check on={1} size={44} />{c}
@@ -528,9 +530,11 @@ export const Main: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const t = frame / fps;
-  const shakes: [number, number][] = [[B.hook.closed, 8], ...B.items.map((T) => [T + 1.0, 12] as [number, number]), [B.rapid.po, 16], [B.end.hit, 12]];
+  const shakes: [number, number][] = [[B.hook.closed, 8], ...B.items.map((it) => [it.po, 12] as [number, number]), [B.rapid.po, 16], [B.end.hit, 12]];
   const [sx, sy] = shake(t, shakes);
-  const hasAudio = withAudio && getStaticFiles().some((f) => f.name === 'sfx.wav');
+  const files = getStaticFiles().map((f) => f.name);
+  const track = files.includes('final-mix.wav') ? 'final-mix.wav' : files.includes('sfx.wav') ? 'sfx.wav' : null;
+  const hasAudio = withAudio && !!track;
   return (
     <AbsoluteFill style={{background: C.light, overflow: 'hidden'}}>
       <Backdrop t={t} />
@@ -545,7 +549,7 @@ export const Main: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => {
         <filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed={frame % 7} /><feColorMatrix type="saturate" values="0" /></filter>
         <rect width="100%" height="100%" filter="url(#g)" />
       </svg>
-      {hasAudio ? <Audio src={staticFile('sfx.wav')} /> : null}
+      {hasAudio ? <Audio src={staticFile(track!)} /> : null}
     </AbsoluteFill>
   );
 };

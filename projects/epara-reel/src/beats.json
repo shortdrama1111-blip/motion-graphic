@@ -1,9 +1,19 @@
 {
-  "_comment": "120 BPM: beat 0.5 s, bar 2 s, downbeats on even seconds. Items start on downbeats; every PO! lands at T+1.0.",
-  "fps": 30, "duration": 26.5, "bpm": 120, "beat": 0.5,
-  "hook": {"ticket": 0.05, "head1": 0.3, "serve": 1.5, "head2": 2.0, "closed": 3.0, "wipe": 3.5, "nomore": 3.8, "phone": 4.3},
-  "items": [5.0, 7.0, 9.0, 11.0, 13.0, 15.0, 17.0, 19.0],
-  "itemKeys": ["onboard", "vcard", "pcard", "pay", "atm", "night", "ria", "cashback"],
-  "rapid": {"start": 21.0, "chipStep": 0.25, "po": 22.5, "breath": 23.0},
-  "end": {"silence": 23.5, "hit": 24.0, "tagline": 24.5, "cta": 25.0}
+  "_comment": "VO-FIRST timing from audio/vo/take2 (ElevenLabs v4). Every scene starts on its spoken question (T) and every PO! stamp lands on the spoken 'Po!' (po).",
+  "fps": 30, "duration": 30.0,
+  "hook": {"ticket": 0.05, "head1": 0.69, "serve": 1.5, "head2": 2.25, "closed": 3.55, "wipe": 4.15, "nomore": 4.43, "phone": 5.25},
+  "items": [
+    {"key": "onboard", "T": 7.31, "po": 8.37},
+    {"key": "vcard", "T": 9.01, "po": 10.53},
+    {"key": "pcard", "T": 11.16, "po": 12.76},
+    {"key": "pay", "T": 13.37, "po": 14.89},
+    {"key": "atm", "T": 15.52, "po": 16.92},
+    {"key": "night", "T": 17.57, "po": 19.48},
+    {"key": "ria", "T": 20.14, "po": 21.32},
+    {"key": "cashback", "T": 21.95, "po": 22.68}
+  ],
+  "rapid": {"start": 23.32, "chipStart": 0.06, "chipStep": 0.15, "po": 24.2, "breath": 24.72},
+  "end": {"hit": 25.6, "tagline": 26.2, "cta": 27.65, "url": 27.95},
+  "vo": {"file": "audio/vo/take2.wav", "offset": 0.0, "mute": [[4.05, 4.25]]},
+  "music": {"file": "music/four-eras-one-rescue.wav", "bodyFrom": 0.0, "lowpassUntil": 4.43, "stopAt": 24.72, "endFrom": 100.0}
 }
