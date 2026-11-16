@@ -1,0 +1,10 @@
+/home/user/motion-graphic/projects/epara-lights-on/tools/blender_lockup.py:65: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes = True
+/home/user/motion-graphic/projects/epara-lights-on/tools/blender_lockup.py:92: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  mat.use_nodes = True
+panes 581
+00:07.400  render           | Saved: '/home/user/motion-graphic/projects/epara-lights-on/build/lockup/0000.png'
+00:13.614  render           | Saved: '/home/user/motion-graphic/projects/epara-lights-on/build/lockup/0001.png'
+00:20.238  render           | Saved: '/home/user/motion-graphic/projects/epara-lights-on/build/lockup/0002.png'
+00:26.733  render           | Saved: '/home/user/motion-graphic/projects/epara-lights-on/build/lockup/0003.png'
+00:33.521  render           | Saved: '/home/user/motion-graphic/projects/epara-lights-on/build/lockup/0004.png'
