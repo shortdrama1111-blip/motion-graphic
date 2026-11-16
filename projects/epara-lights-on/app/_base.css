@@ -1,0 +1,8 @@
+@font-face{font-family:J;src:url(plus-jakarta-sans-latin-500-normal.woff2);font-weight:500}
+@font-face{font-family:J;src:url(plus-jakarta-sans-latin-600-normal.woff2);font-weight:600}
+@font-face{font-family:J;src:url(plus-jakarta-sans-latin-700-normal.woff2);font-weight:700}
+@font-face{font-family:J;src:url(plus-jakarta-sans-latin-800-normal.woff2);font-weight:800}
+*{box-sizing:border-box;margin:0}
+body{width:740px;height:1600px;font-family:J,sans-serif;color:#111;position:relative;overflow:hidden}
+.abs{position:absolute}
+.status{top:22px;left:88px;font-weight:700;font-size:30px}
