@@ -19,8 +19,9 @@ const Plate: React.FC<{src: string; scale?: number; ox?: number; oy?: number; st
 
 // whip-in: every scene enters with a short zoom + blur, which hides the cut
 const Enter: React.FC<{t: number; t0: number; children: React.ReactNode}> = ({t, t0, children}) => {
-  const u = seg(t, t0, t0 + 0.22);
-  return <AbsoluteFill style={{transform: `scale(${lerp(1.12, 1, eo3(u))})`, filter: u < 1 ? `blur(${18 * (1 - u)}px) brightness(${lerp(1.2, 1, u)})` : undefined}}>{children}</AbsoluteFill>;
+  // clean cut (v3): no zoom, no blur; a 3-frame dissolve only
+  const u = seg(t, t0, t0 + 0.1);
+  return <AbsoluteFill style={{opacity: u}}>{children}</AbsoluteFill>;
 };
 
 const Pop: React.FC<{t: number; t0: number; x: number; y: number; rot?: number; children: React.ReactNode}> = ({t, t0, x, y, rot = 0, children}) => {
@@ -171,7 +172,7 @@ const City: React.FC<{t: number}> = ({t}) => {
 
 const Dive: React.FC<{t: number}> = ({t}) => (
   <Enter t={t} t0={B.dive}>
-    <Sequence from={Math.round(B.dive * B.fps)}><OffthreadVideo src={staticFile('clips/S3-clean.mp4')} muted playbackRate={B.diveRate} style={{width: W, height: H}} /></Sequence>
+    <Sequence from={Math.round(B.dive * B.fps)}><OffthreadVideo src={staticFile('clips/S3b.mp4')} muted playbackRate={B.diveRate} style={{width: W, height: H}} /></Sequence>
   </Enter>
 );
 

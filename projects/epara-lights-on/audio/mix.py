@@ -1,7 +1,8 @@
-"""SFX + voice-over mix for "Qyteti ndizet" (no music yet: the user may add a track).
+"""v3 sound for "Qyteti ndizet": fewer, softer, designed SFX (no UI pops/dings/jingles) + VO, no music yet.
 
-Reads ../src/beats.json, ../public/vo.wav and the kit SFX; writes ../public/mix.wav (-14 LUFS, ~-1 dBTP)
-and ../renders/sfx-stem.wav (SFX only, for re-mixing with music).
+- VO lines are moved only inside their real pauses (beats.json voShift), never stretched.
+- Every SFX goes through a small synthetic room (convolution reverb) so nothing sounds dry/cheap.
+Writes ../public/mix.wav (-14 LUFS, ~-1 dBTP) and ../renders/sfx-stem.wav.
 """
 import json
 import os
@@ -10,98 +11,94 @@ import numpy as np
 import pyloudnorm as pyln
 import soundfile as sf
 from scipy.ndimage import maximum_filter1d, uniform_filter1d
-from scipy.signal import butter, resample_poly, sosfilt
+from scipy.signal import butter, fftconvolve, resample_poly, sosfilt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 B = json.load(open(os.path.join(ROOT, 'src', 'beats.json')))
 SR, DUR = 48000, B['duration']
 N = int(DUR * SR)
-rng = np.random.default_rng(21)
-sfx = np.zeros((N, 2))
-KIT = os.path.join(ROOT, '..', '..', 'assets', 'sfx')
+rng = np.random.default_rng(31)
+dry = np.zeros((N, 2))
 
 
 def tt(n):
     return np.arange(n) / SR
 
 
-def bp(x, lo, hi):
-    return sosfilt(butter(2, [lo, hi], 'band', fs=SR, output='sos'), x)
-
-
-def lp(x, fc):
-    return sosfilt(butter(2, fc, 'low', fs=SR, output='sos'), x)
-
-
-def hp(x, fc):
-    return sosfilt(butter(2, fc, 'high', fs=SR, output='sos'), x)
+def filt(x, kind, f):
+    return sosfilt(butter(2, f, kind, fs=SR, output='sos'), x)
 
 
 def env(n, a, d):
     e = np.ones(n)
     na, nd = min(n, max(1, int(a * SR))), min(n, max(1, int(d * SR)))
-    e[:na] = np.linspace(0, 1, na)
-    e[-nd:] *= np.linspace(1, 0, nd)
+    e[:na] = np.linspace(0, 1, na) ** 2
+    e[-nd:] *= np.linspace(1, 0, nd) ** 2
     return e
 
 
-def place(sig, at, g=1.0, pan=0.0):
+def place(sig, at, g=1.0, pan=0.0, width=0.0):
     i = int(round(at * SR))
     if i >= N:
         return
     if sig.ndim == 1:
         l, r = np.cos((pan + 1) * np.pi / 4), np.sin((pan + 1) * np.pi / 4)
-        sig = np.stack([sig * l * 1.41, sig * r * 1.41], 1)
+        d = int(width * 0.012 * SR)
+        right = np.roll(sig, d) if d else sig
+        sig = np.stack([sig * l * 1.41, right * r * 1.41], 1)
     if i < 0:
         sig, i = sig[-i:], 0
     j = min(N, i + len(sig))
-    sfx[i:j] += sig[: j - i] * g
+    dry[i:j] += sig[: j - i] * g
 
 
-def load(name):
-    x, sr = sf.read(os.path.join(KIT, name + '.wav'), always_2d=True)
-    x = x.mean(1)
-    if sr != SR:
-        x = resample_poly(x, SR, sr)
-    return x / (np.abs(x).max() + 1e-9)
-
-
-def whoosh(d=0.3, up=True, lo=300, hi=6000):
+# ---------------------------------------------------------------- designed sounds
+def air(d=0.6, lo=250, hi=2400, up=True):
+    """soft swell of air: band-limited noise sweeping, smooth bell-shaped envelope"""
     n = int(d * SR)
     x = rng.standard_normal(n)
     y = np.zeros(n)
-    for k in range(0, n, 960):
+    for k in range(0, n, 1200):
         u = k / n
-        f = lo + (hi - lo) * (u if up else 1 - u) ** 1.5
-        y[k:k + 960] = bp(x[k:k + 960], max(80, f * 0.6), min(20000, f * 1.4))
-    return y * np.sin(np.pi * np.linspace(0, 1, n)) ** 1.5
+        c = lo * (hi / lo) ** (u if up else 1 - u)
+        y[k:k + 1200] = filt(x[k:k + 1200], 'band', [max(40, c * 0.5), min(20000, c * 1.6)])
+    return y * np.sin(np.pi * np.linspace(0, 1, n)) ** 2.2
 
 
-def boom(d=2.0, f0=46):
+def sub(d=1.2, f0=42, punch=1.8):
     n = int(d * SR)
-    f = f0 * (1 + 1.6 * np.exp(-tt(n) * 10))
-    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt(n) * 2.6) + lp(rng.standard_normal(n), 1200) * np.exp(-tt(n) * 16) * 0.4
+    f = f0 * (1 + punch * np.exp(-tt(n) * 14))
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt(n) * 3.0) * env(n, 0.004, 0.3)
 
 
-def bell(f, d=1.4):
+def soft_click(f=2600):
+    n = int(0.05 * SR)
+    return filt(rng.standard_normal(n), 'band', [f * 0.6, f * 1.4]) * np.exp(-tt(n) * 120)
+
+
+def shimmer(d=1.6, root=523.25, notes=(0, 7, 12, 16, 19), attack=0.25):
+    """glassy pad: soft sines with slow attack and gentle beating, high-passed"""
     n = int(d * SR)
-    return sum(a * np.sin(2 * np.pi * f * r * tt(n)) * np.exp(-tt(n) * k) for r, a, k in ((1, 1, 2.6), (2.76, 0.3, 5), (5.4, 0.12, 8))) * env(n, 0.002, 0.2)
+    s = np.zeros(n)
+    for k, st in enumerate(notes):
+        f = root * 2 ** (st / 12)
+        for det in (-0.004, 0.004):
+            s += np.sin(2 * np.pi * f * (1 + det) * tt(n) + k) / (1 + k * 0.4)
+    s = filt(s, 'high', 300)
+    return s / np.abs(s).max() * env(n, attack, d * 0.6)
 
 
-def glass(f=None):
-    """small glass tick: a short high bell + a click"""
-    f = f or rng.uniform(2400, 4200)
-    n = int(0.25 * SR)
-    s = bell(f, 0.25) * 0.7
-    c = hp(rng.standard_normal(int(0.01 * SR)), 3000)
-    s[: len(c)] += c * 0.4
+def sparkle(d=0.9, count=14):
+    """quiet granular glints: very short high sines spread in time"""
+    n = int(d * SR)
+    s = np.zeros(n)
+    for _ in range(count):
+        i = int(rng.uniform(0, 0.8) * n)
+        f = rng.uniform(3000, 6500)
+        m = int(0.06 * SR)
+        g = np.sin(2 * np.pi * f * tt(m)) * np.exp(-tt(m) * 60) * rng.uniform(0.3, 1)
+        s[i:i + m] += g[: max(0, min(m, n - i))]
     return s
-
-
-def thunk(f0=120):
-    n = int(0.35 * SR)
-    s = np.sin(2 * np.pi * np.cumsum(f0 * (1 + 2 * np.exp(-tt(n) * 40))) / SR) * np.exp(-tt(n) * 14)
-    return s + bell(1800, 0.35) * 0.2
 
 
 def riser(d):
@@ -109,70 +106,69 @@ def riser(d):
     x = rng.standard_normal(n)
     out = np.zeros(n)
     for j in range(0, n, 2400):
-        fc = 300 + 5000 * (j / n) ** 2
-        out[j:j + 2400] = hp(lp(x[j:j + 2400], min(fc * 2, 20000)), fc)
-    return out * np.linspace(0, 1, n) ** 2
+        fc = 200 + 3000 * (j / n) ** 2
+        out[j:j + 2400] = filt(filt(x[j:j + 2400], 'low', min(fc * 2, 18000)), 'high', fc)
+    return out * np.linspace(0, 1, n) ** 3
 
 
-tick, pop, success, chime, star, switch, counter = (load(k) for k in ('tick', 'pop', 'success', 'chime', 'star', 'switch', 'counter'))
+# ---------------------------------------------------------------- cue sheet (less is more)
+place(filt(sub(1.4, 38, 0.6), 'low', 200), 0.02, 0.35)                     # room tone under the hook
+place(soft_click(1800), B['tap'], 0.35)                                     # the tap
+place(sub(0.25, 70, 0.4), B['tap'], 0.2)
+place(air(0.45, 400, 3200), B['bolt'] - 0.05, 0.5, 0.3, 1)                  # light leaves the phone
+place(air(0.35, 300, 2200), B['hook'] - 0.02, 0.35, 0, 1)
+place(sub(1.2, 44), B['impact'], 0.8)                                       # light hits the tower
+place(air(0.25, 2000, 600, up=False), B['impact'], 0.25, 0, 1)
+place(shimmer(1.8, 523.25), B['lightOn'], 0.35, 0, 1)                       # windows switch on (C major add9)
+place(sparkle(0.6, 10), B['lightOn'] + 0.1, 0.12, 0, 1)
+place(air(0.3, 300, 1800), B['towers'] - 0.12, 0.25, 0, 1)                  # cut
+place(air(0.6, 500, 4000), B['ribbon'], 0.4, -0.3, 1)                      # light travels window to window
+place(shimmer(1.2, 659.25, (0, 7, 12)), B['winB'], 0.22, 0.4, 1)
+place(air(0.3, 300, 1800), B['skim'] - 0.12, 0.25, 0, 1)                    # cut into the flight
+place(filt(air(3.6, 150, 700), 'low', 900), B['skim'], 0.35, 0, 1)          # wind of the flight
+place(soft_click(3200), B['paid'], 0.18, -0.3)
+place(air(0.3, 300, 1800), B['city'] - 0.12, 0.25, 0, 1)
+place(riser(B['drop'] - 0.07 - B['cityReveal']), B['cityReveal'], 0.22, 0, 1)   # build into the drop
+place(sub(2.4, 40, 2.2), B['drop'], 0.95)                                  # the city becomes the mark
+place(shimmer(2.4, 392.0, (0, 7, 12, 16, 19, 24)), B['drop'], 0.4, 0, 1)
+place(filt(air(B['diveDur'], 120, 900), 'low', 1200), B['dive'], 0.45, 0, 1)    # the descent
+place(air(0.6, 1500, 400, up=False), B['phone2'] - 0.3, 0.2, 0, 1)
+place(soft_click(2200), B['phone2'] + 0.2, 0.2)
+place(air(0.5, 200, 1500), B['end'] - 0.1, 0.3, 0, 1)                      # into the lock-up
+place(sparkle(1.2, 26), B['end'] + 0.2, 0.18, 0, 1)                         # panes arriving
+place(sub(0.6, 60, 0.8), B['end'] + 34 / 30, 0.45)                          # panes lock
+place(shimmer(2.2, 523.25, (0, 4, 7, 12, 16)), B['logoSwap'], 0.38, 0, 1)   # official logo
+place(air(0.5, 300, 2000), B['markMove'], 0.15, 0, 1)
 
-# --- hook: tap, bolt, impact, windows switch on floor by floor
-place(lp(boom(1.0, 42), 300), 0.03, 0.25)
-place(tick, B['tap'], 0.6)
-place(thunk(160), B['tap'], 0.35)
-place(whoosh(0.35, True, 500, 8000), B['bolt'], 0.6, 0.4)
-place(whoosh(0.32, True, 300, 6000), B['hook'], 0.55)
-place(thunk(90), B['impact'], 0.8)
-place(lp(boom(1.2, 50), 500), B['impact'], 0.5)
-for k in range(14):
-    place(glass(), B['lightOn'] + k * (B['lightFull'] - B['lightOn']) / 14, 0.18, rng.uniform(-0.6, 0.6))
-place(star, B['lightFull'], 0.45)
-place(bell(1568, 1.6), B['lightFull'], 0.18)
-# --- towers: send / receive / instant
-place(whoosh(0.25, True, 600, 7000), B['towers'] - 0.18, 0.5)
-place(pop, B['winA'], 0.45, -0.5)
-place(whoosh(0.5, True, 400, 5000), B['ribbon'], 0.45, 0.2)
-place(chime, B['winB'], 0.4, 0.5)
-place(success, B['instant'], 0.5)
-# --- skim: café QR, ATM, day & night
-place(whoosh(0.25, True, 600, 7000), B['skim'] - 0.18, 0.5)
-place(pop, B['qr'], 0.45, -0.4)
-place(bell(1760, 0.12) * 0.6, B['paid'] - 0.25, 0.35, -0.4)
-place(success, B['paid'], 0.4)
-place(pop, B['atm'], 0.45)
-place(counter, B['atm'] + 0.1, 0.25)
-place(pop, B['daynight'], 0.45)
-place(bell(1318, 1.0), B['daynight'] + 0.05, 0.18)
-# --- city: rise into the drop
-place(whoosh(0.25, True, 600, 7000), B['city'] - 0.18, 0.5)
-place(riser(B['drop'] - 0.07 - B['cityReveal']), B['cityReveal'], 0.25)
-place(boom(2.2, 44), B['drop'], 0.9)
-for k in range(10):
-    place(glass(), B['drop'] + 0.02 + k * 0.04, 0.16, rng.uniform(-0.8, 0.8))
-# --- dive, phone, lock-up
-place(whoosh(1.8, True, 200, 4000), B['dive'] - 0.05, 0.5)
-place(whoosh(0.25, True, 600, 7000), B['phone2'] - 0.18, 0.45)
-place(success, B['phone2'] + 0.1, 0.45)
-place(whoosh(0.4, False, 300, 5000), B['end'] - 0.1, 0.4)
-for k in range(26):
-    place(glass(), B['end'] + 0.15 + k * 0.042, 0.11, rng.uniform(-0.9, 0.9))
-place(thunk(110), B['end'] + 34 / 30, 0.55)
-place(pop, B['cta'], 0.4)
-place(bell(1046.5, 2.0), B['logoSwap'], 0.22)
-place(bell(1568, 2.0), B['logoSwap'] + 0.1, 0.16)
-place(whoosh(0.45, True, 400, 5000), B['markMove'], 0.3)
-place(pop, B['logoFull'], 0.35)
-place(star, B['tagline'], 0.35)
-sfx[-int(0.3 * SR):] *= np.linspace(1, 0, int(0.3 * SR))[:, None]
+# small room: synthetic stereo impulse response, ~1.1 s decay
+irn = int(1.1 * SR)
+ir = np.stack([rng.standard_normal(irn), rng.standard_normal(irn)], 1) * np.exp(-tt(irn) * 5.5)[:, None]
+ir = filt(ir.T, 'low', 6000).T
+ir /= np.abs(ir).sum(0, keepdims=True) ** 0.5 * 30
+wet = np.stack([fftconvolve(dry[:, c], ir[:, c])[:N] for c in range(2)], 1)
+sfx = dry * 0.82 + wet * 0.55
+sfx[-int(0.4 * SR):] *= np.linspace(1, 0, int(0.4 * SR))[:, None]
 
+# ---------------------------------------------------------------- VO, moved only in its pauses
 meter = pyln.Meter(SR)
-vo, sr = sf.read(os.path.join(ROOT, 'public', 'vo.wav'), always_2d=True)
-vo = np.repeat(vo.mean(1, keepdims=True), 2, 1)[:N]
-vo = np.pad(vo, ((0, N - len(vo)), (0, 0)))
+v, sr = sf.read(os.path.join(ROOT, 'public', 'vo.wav'), always_2d=True)
+v = v.mean(1)
+if sr != SR:
+    v = resample_poly(v, SR, sr)
+cuts = [0.0] + [c for c, _ in B['voShift']] + [len(v) / SR]
+shifts = [0.0] + [s for _, s in B['voShift']]
+vo = np.zeros(N)
+for (a, b), s in zip(zip(cuts, cuts[1:]), shifts):
+    seg_ = v[int(a * SR):int(b * SR)]
+    i = int((a + s) * SR)
+    j = min(N, i + len(seg_))
+    vo[i:j] += seg_[: j - i]
+vo = np.stack([vo, vo], 1)
 vo = pyln.normalize.loudness(vo, meter.integrated_loudness(vo), -16.0)
-sfx_n = pyln.normalize.loudness(sfx, meter.integrated_loudness(sfx), -20.0)
+sfx_n = pyln.normalize.loudness(sfx, meter.integrated_loudness(sfx), -23.0)
 os.makedirs(os.path.join(ROOT, 'renders'), exist_ok=True)
-sf.write(os.path.join(ROOT, 'renders', 'sfx-stem.wav'), (sfx_n * 0.5).astype(np.float32), SR, subtype='PCM_24')
+sf.write(os.path.join(ROOT, 'renders', 'sfx-stem.wav'), sfx_n.astype(np.float32), SR, subtype='PCM_24')
+sf.write(os.path.join(ROOT, 'renders', 'vo-stem.wav'), vo.astype(np.float32), SR, subtype='PCM_24')
 mix = vo + sfx_n
 mix = pyln.normalize.loudness(mix, meter.integrated_loudness(mix), -14.0)
 ceil = 10 ** (-1.2 / 20)
