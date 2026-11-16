@@ -25,3 +25,10 @@ Reusable motion techniques. One file per skill, named `kebab-case.md`, using `_T
 | [screen-to-world](screen-to-world.md) | transition/camera | three.js/2.5D | Fly through the phone screen into a 3D world (city route, pin, tracker) |
 | [cards-off-screen-fan](cards-off-screen-fan.md) | UI/depth | CSS 3D/three.js | Result cards lift off the screen into a 3D fan, line traces the pick |
 | [real-objects-checklist](real-objects-checklist.md) | QA | any | Bevels, growing shadows, real UI rows, no skeletons, 9:16 checks |
+| [window-relight-logo](window-relight-logo.md) | brand/photoreal | OpenCV | Official logo lit into the real rooms of a tower / a whole city |
+| [green-screen-phone-comp](green-screen-phone-comp.md) | UI/compositing | OpenCV+HTML | Track a green phone screen, insert a rebuilt (privacy-safe) app, despill |
+| [ai-shot-cleanup](ai-shot-cleanup.md) | QA | OpenCV | Track and blur fake signs/text in AI footage |
+| [seamless-transitions](seamless-transitions.md) | transition | any | Start/end frames from the edit, push through window glass, clean cuts |
+| [blender-pane-lockup](blender-pane-lockup.md) | 3D/brand | bpy | Glowing panes lock into the mark, dissolve into the official logo in place |
+| [music-drop-alignment](music-drop-alignment.md) | audio | librosa | Offset the track so its drop hits the visual drop; duck under voice |
+| [premium-sfx](premium-sfx.md) | audio | numpy | Few designed sounds + room reverb; no UI pops/dings |

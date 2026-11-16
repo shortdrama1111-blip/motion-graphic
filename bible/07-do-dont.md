@@ -22,4 +22,11 @@
 - DON'T: put anything but the hero hit within 60 ms of the hero hit. [ref: amazon-a-to-z]
 - DON'T: speed up the voice-over; record at natural speed and move the picture. [ref: amazon-a-to-z, keemfinity]
 - NOTE: dark vs light stage depends on the brand: WhatsApp needed light, Amazon works dark with bright heroes. [ref: whatsapp, amazon-a-to-z]
+- DON'T: zoom/blur "whip" into every cut; it reads as jumpy. Clean cuts on the voice. [feedback 2026-11-16, epara-lights-on]
+- DON'T: use UI pops, dings, counters or app jingles as SFX; they sound cheap. Few designed sounds + room. [feedback 2026-11-16]
+- DON'T: let a "light/flash" layer use box-shadow spread for rings: it fills a disc. Draw rings with a border. [epara-lights-on]
+- DO: put the official logo on the background it was designed for (switch night → light for the end card if needed). [epara-lights-on]
+- DO: rebuild app screens from the user's screenshots with fictional data; never publish their real names/balances/contacts. [epara-lights-on]
+- DO: when the user generates AI shots, give exact start/end frames exported from the edit; ask for no zoom/speed ramp. [epara-lights-on]
+- NOTE: AI music ignores timed structure prompts; align by offsetting the track to its own drop. [epara-lights-on]
 

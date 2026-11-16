@@ -8,3 +8,4 @@
 - 2026-11-15 — projects/epara-reel: 9:16 cut-based reel (hook + brand 'PO!' stamp rapid-fire), SFX-only stem for user's own music at 120 BPM.
 - 2026-11-16 — Lesson: with TTS in Albanian, brand names may get the wrong stress (epara = e-pa-RÁ). User's call: never speak the brand in VO; keep it on screen. Ask early how the brand name is pronounced.
 - 2026-11-16 — Ingested Amazon 'From A to Z' prompt: dark-hero-stage preset, 3 transitions, 5 skills, lessons (frame-0 motion, real 9:16 re-layout, real objects, hero-hit spacing). Higgsfield affiliate content ignored.
+- 2026-11-16 — Photoreal Hybrid method proven on epara 'Qyteti ndizet' (approved): new preset, 7 skills, lessons; Tinder 'Lights On' reference filed.

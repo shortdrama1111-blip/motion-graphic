@@ -46,8 +46,11 @@ session that works here must follow this file.
   numpy/scipy, pyloudnorm −14 LUFS, oversampled limiter).
 - **Video/audio ops:** ffmpeg/ffprobe (cuts, stitching, encoding, frame grabs).
 - **Image ops:** ImageMagick `convert`.
-- **NO Higgsfield generation.** The user has said: do not use Higgsfield to
-  generate anything (images, video, audio). Build visuals in code.
+- **NO Higgsfield generation by Claude.** The user generates AI shots
+  (Seedance/Higgsfield) themselves; Claude writes the shot list + prompts and
+  exports exact start/end frames, then does everything else in code
+  (see `bible/styles/photoreal-hybrid.md`, reference project `projects/epara-lights-on/`).
+- **Blender:** `pip install bpy==5.3.0` gives headless Blender (Cycles CPU) here.
 - **ElevenLabs** (voice/SFX) only when the user asks for it; it costs credits,
   so confirm before generating.
 - Default deliverables unless the bible says otherwise: 1080x1920 (9:16) and
