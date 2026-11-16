@@ -20,7 +20,7 @@ const Plate: React.FC<{src: string; scale?: number; ox?: number; oy?: number; st
 // whip-in: every scene enters with a short zoom + blur, which hides the cut
 const Enter: React.FC<{t: number; t0: number; children: React.ReactNode}> = ({t, t0, children}) => {
   const u = seg(t, t0, t0 + 0.22);
-  return <AbsoluteFill style={{transform: `scale(${lerp(1.12, 1, eo3(u))})`, filter: u < 1 ? `blur(${18 * (1 - u)}px) brightness(${lerp(1.6, 1, u)})` : undefined}}>{children}</AbsoluteFill>;
+  return <AbsoluteFill style={{transform: `scale(${lerp(1.12, 1, eo3(u))})`, filter: u < 1 ? `blur(${18 * (1 - u)}px) brightness(${lerp(1.2, 1, u)})` : undefined}}>{children}</AbsoluteFill>;
 };
 
 const Pop: React.FC<{t: number; t0: number; x: number; y: number; rot?: number; children: React.ReactNode}> = ({t, t0, x, y, rot = 0, children}) => {
@@ -88,8 +88,9 @@ const Hook: React.FC<{t: number}> = ({t}) => {
       </AbsoluteFill>
       <Streak p0={[540, 2000]} p1={[ix, iy]} u={seg(t, B.hook, B.impact) * 1.0 + Math.max(0, t - B.impact) * 3} width={12} lift={-120} />
       {t > B.impact ? (
-        <div style={{position: 'absolute', left: ix, top: iy, width: 10, height: 10, borderRadius: 10, transform: 'translate(-50%,-50%)',
-          boxShadow: `0 0 0 ${lerp(0, 520, eo3(seg(t, B.impact, B.impact + 0.6)))}px rgba(224,37,106,${0.35 * (1 - seg(t, B.impact, B.impact + 0.6))})`}} />
+        (() => { const u = seg(t, B.impact, B.impact + 0.55), rr = lerp(20, 460, eo3(u)); return (
+          <div style={{position: 'absolute', left: ix - rr, top: iy - rr, width: 2 * rr, height: 2 * rr, borderRadius: '50%', border: `${lerp(10, 2, u)}px solid rgba(255,120,170,${0.6 * (1 - u)})`,
+            boxShadow: `0 0 30px rgba(224,37,106,${0.5 * (1 - u)})`}} />); })()
       ) : null}
     </Enter>
   );
@@ -123,11 +124,9 @@ const Towers: React.FC<{t: number}> = ({t}) => {
 };
 
 const Skim: React.FC<{t: number}> = ({t}) => {
-  const bursts = [[230, 1250, 5.2], [780, 1120, 5.6], [420, 980, 6.45], [860, 1350, 6.9], [320, 1500, 7.3], [700, 900, 7.85], [540, 1250, 8.2]];
   return (
     <Enter t={t} t0={B.skim}>
       <Sequence from={Math.round(B.skim * B.fps)}><OffthreadVideo src={staticFile('clips/S2.mp4')} muted style={{width: W, height: H}} /></Sequence>
-      {bursts.map(([x, y, t0], i) => <Glow key={i} x={x} y={y} r={170} a={t > t0 ? Math.exp(-3 * (t - t0)) * 0.9 : 0} color={i % 2 ? '#C8007B' : '#F04E45'} />)}
       {t < B.atm ? (
         <Pop t={t} t0={B.qr} x={330} y={760} rot={-6}>
           <div style={{width: 340, height: 735, borderRadius: 52, padding: 12, background: '#0F1020', boxShadow: '0 40px 80px rgba(0,0,0,0.6)'}}>
@@ -184,34 +183,44 @@ const Phone2: React.FC<{t: number}> = ({t}) => (
 
 const End: React.FC<{t: number}> = ({t}) => {
   const f = clamp(Math.floor((t - B.end) * B.fps), 0, 59);
-  const swap = seg(t, B.logoSwap, B.logoSwap + 0.25);
-  // official logo placed so its mark sits exactly on the rendered pane mark, then slides to centre
-  const K = 0.72, KY = -120;   // lock-up shown smaller and a little higher
+  // 1) pane lock-up (Blender), shown smaller and a little higher
+  const K = 0.72, KY = -120;
   const m = {x0: 540 + (L.x0 - 540) * K, y0: 960 + (L.y0 - 960) * K + KY, x1: 540 + (L.x1 - 540) * K, y1: 960 + (L.y1 - 960) * K + KY};
-  const Wl = (m.x1 - m.x0) / ((908 - 35) / 2000), Hl = Wl * 1217 / 2000;
-  const lx0 = m.x0 - (35 / 2000) * Wl, ly0 = m.y0 - (9 / 1217) * Hl;
-  const slide = eio3(seg(t, B.logoSwap + 0.15, B.logoSwap + 0.6));
-  const FS = 0.5;
-  const lx = lerp(lx0, (W - Wl * FS) / 2, slide), ly = lerp(ly0, 430, slide), ls = lerp(1, FS, slide);
-  const word = seg(t, B.logoSwap + 0.2, B.logoSwap + 0.6);
+  // 2) final lock-up: official logo centred; its mark rectangle inside the logo (logo raster 2000x1217, mark x35-908, y9-1206)
+  const WF = 760, HF = WF * 1217 / 2000, LX = (W - WF) / 2, LY = 420;
+  const fm = {x0: LX + (35 / 2000) * WF, y0: LY + (9 / 1217) * HF, x1: LX + (908 / 2000) * WF, y1: LY + (1206 / 1217) * HF};
+  const dis = seg(t, B.logoSwap, B.logoSwap + 0.22);          // panes -> official mark, same place
+  const flash = Math.exp(-((t - B.logoSwap - 0.08) ** 2) / 0.006);
+  const mv = eio3(seg(t, B.markMove, B.logoFull));               // mark travels to its place in the logo
+  const r = {x0: lerp(m.x0, fm.x0, mv), y0: lerp(m.y0, fm.y0, mv), x1: lerp(m.x1, fm.x1, mv), y1: lerp(m.y1, fm.y1, mv)};
+  const word = eo3(seg(t, B.logoFull, B.logoFull + 0.4));      // wordmark written out from the mark
+  const full = t >= B.logoFull;
+  const wm = `linear-gradient(90deg, #000 ${lerp(45.4, 101, word)}%, transparent ${lerp(45.5, 104, word)}%)`;
   return (
     <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 42%, #2A1446 0%, #12123A 45%, #070914 100%)'}}>
-      <div style={{position: 'absolute', left: 540 - 500, top: 760 - 500, width: 1000, height: 1000, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,0,123,0.35), rgba(0,0,0,0) 65%)', opacity: 0.6 + 0.4 * swap}} />
-      {swap < 1 ? <Img src={staticFile(`lockup/${String(f).padStart(4, '0')}.png`)} style={{position: 'absolute', inset: 0, width: W, height: H, opacity: 1 - swap, transform: `translateY(${KY}px) scale(${K})`, transformOrigin: '540px 960px'}} /> : null}
-      {swap > 0 ? (
-        <div style={{position: 'absolute', left: lx, top: ly, width: Wl, height: Hl, transform: `scale(${ls})`, transformOrigin: '0 0', opacity: swap,
-          WebkitMaskImage: `linear-gradient(90deg, #000 ${lerp(44, 110, word)}%, transparent ${lerp(50, 116, word)}%)`, maskImage: `linear-gradient(90deg, #000 ${lerp(44, 110, word)}%, transparent ${lerp(50, 116, word)}%)`}}>
-          <Img src={staticFile('epara-logo.svg')} style={{width: '100%', height: '100%', filter: 'drop-shadow(0 0 30px rgba(255,255,255,0.15)) brightness(1.15)'}} />
-        </div>
+      <div style={{position: 'absolute', left: 540 - 520, top: 700 - 520, width: 1040, height: 1040, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,0,123,0.32), rgba(0,0,0,0) 65%)', opacity: 1 - mv}} />
+      {/* night turns to day: the official logo is made for a light background */}
+      <AbsoluteFill style={{opacity: mv, background: 'radial-gradient(ellipse at 50% 30%, #FFFFFF 0%, #F7F2FB 55%, #F1E6F5 100%)'}} />
+      <div style={{position: 'absolute', left: 540 - 560, top: 660 - 560, width: 1120, height: 1120, borderRadius: '50%', opacity: 0.55 * mv,
+        background: 'radial-gradient(circle, rgba(224,37,106,0.16), rgba(0,114,188,0.06) 45%, rgba(255,255,255,0) 70%)'}} />
+      {dis < 1 ? <Img src={staticFile(`lockup/${String(f).padStart(4, '0')}.png`)} style={{position: 'absolute', inset: 0, width: W, height: H, opacity: 1 - dis,
+        transform: `translateY(${KY}px) scale(${K})`, transformOrigin: '540px 960px', filter: `brightness(${1 + 1.2 * flash})`}} /> : null}
+      {dis > 0 && !full ? (
+        <Img src={staticFile('mark.png')} style={{position: 'absolute', left: r.x0, top: r.y0, width: r.x1 - r.x0, height: r.y1 - r.y0, opacity: dis,
+          filter: `brightness(${1 + 1.0 * flash}) drop-shadow(0 ${lerp(0, 18, mv)}px ${lerp(30 + 60 * flash, 30, mv)}px rgba(${mv > 0.5 ? '91,42,155,0.25' : '224,37,106,0.55'}))`}} />
+      ) : null}
+      {full ? (
+        <Img src={staticFile('epara-logo.svg')} style={{position: 'absolute', left: LX, top: LY, width: WF, height: HF, WebkitMaskImage: wm, maskImage: wm,
+          filter: 'drop-shadow(0 18px 30px rgba(91,42,155,0.25))'}} />
       ) : null}
       {t > B.tagline ? (
-        <Img src={staticFile('tagline.svg')} style={{position: 'absolute', left: 540 - 330, top: 1000 - 245, width: 660, height: 330, opacity: seg(t, B.tagline, B.tagline + 0.3),
-          filter: 'brightness(0) invert(1)', transform: `translateY(${20 * (1 - eo3(seg(t, B.tagline, B.tagline + 0.4)))}px)`}} />
+        <Img src={staticFile('tagline.svg')} style={{position: 'absolute', left: 540 - 330, top: 960 - 245, width: 660, height: 330, opacity: seg(t, B.tagline, B.tagline + 0.3),
+          transform: `translateY(${20 * (1 - eo3(seg(t, B.tagline, B.tagline + 0.4)))}px)`}} />
       ) : null}
       <Pop t={t} t0={B.cta} x={540} y={1480}>
         <div style={{background: GRAD, color: '#fff', fontFamily: F, fontWeight: 800, fontSize: 48, padding: '30px 72px', borderRadius: 999, whiteSpace: 'nowrap', boxShadow: '0 20px 50px rgba(200,0,123,0.45)'}}>Shkarko falas</div>
       </Pop>
-      <div style={{position: 'absolute', left: 0, right: 0, top: 1580, textAlign: 'center', fontFamily: F, fontWeight: 600, fontSize: 30, color: 'rgba(255,255,255,0.7)', opacity: seg(t, B.cta + 0.3, B.cta + 0.6)}}>App Store · Google Play</div>
+      <div style={{position: 'absolute', left: 0, right: 0, top: 1580, textAlign: 'center', fontFamily: F, fontWeight: 600, fontSize: 30, color: mv > 0.5 ? '#6B6880' : 'rgba(255,255,255,0.7)', opacity: seg(t, B.cta + 0.3, B.cta + 0.6)}}>App Store · Google Play</div>
     </AbsoluteFill>
   );
 };
@@ -242,7 +251,7 @@ export const Main: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => {
         {t >= B.phone2 && t < B.end + 0.25 ? <Phone2 t={t} /> : null}
         {t >= B.end ? <End t={t} /> : null}
       </AbsoluteFill>
-      <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.35) 100%)'}} />
+      <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.35) 100%)', opacity: 1 - seg(t, B.markMove, B.logoFull)}} />
       {withAudio ? <Audio src={staticFile(track)} /> : null}
     </AbsoluteFill>
   );

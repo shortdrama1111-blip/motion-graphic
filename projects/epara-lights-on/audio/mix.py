@@ -160,6 +160,8 @@ place(thunk(110), B['end'] + 34 / 30, 0.55)
 place(pop, B['cta'], 0.4)
 place(bell(1046.5, 2.0), B['logoSwap'], 0.22)
 place(bell(1568, 2.0), B['logoSwap'] + 0.1, 0.16)
+place(whoosh(0.45, True, 400, 5000), B['markMove'], 0.3)
+place(pop, B['logoFull'], 0.35)
 place(star, B['tagline'], 0.35)
 sfx[-int(0.3 * SR):] *= np.linspace(1, 0, int(0.3 * SR))[:, None]
 
