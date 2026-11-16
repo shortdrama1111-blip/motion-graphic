@@ -169,7 +169,22 @@ sfx_n = pyln.normalize.loudness(sfx, meter.integrated_loudness(sfx), -23.0)
 os.makedirs(os.path.join(ROOT, 'renders'), exist_ok=True)
 sf.write(os.path.join(ROOT, 'renders', 'sfx-stem.wav'), sfx_n.astype(np.float32), SR, subtype='PCM_24')
 sf.write(os.path.join(ROOT, 'renders', 'vo-stem.wav'), vo.astype(np.float32), SR, subtype='PCM_24')
-mix = vo + sfx_n
+# music: placed so its own drop (8.0 s in the track) lands on the city drop; ducked under every word
+mus = np.zeros((N, 2))
+if B.get('musicFile'):
+    mu, msr = sf.read(os.path.join(ROOT, B['musicFile']), always_2d=True)
+    if msr != SR:
+        mu = resample_poly(mu, SR, msr, axis=0)
+    i = int(B['musicOffset'] * SR)
+    j = min(N, i + len(mu))
+    mus[i:j] = mu[: j - i, :2]
+    mus[-int(0.9 * SR):] *= np.linspace(1, 0, int(0.9 * SR))[:, None] ** 1.5
+    mus = pyln.normalize.loudness(mus, meter.integrated_loudness(mus[i:]), -20.0)
+    envv = uniform_filter1d(maximum_filter1d(np.abs(vo).max(1), int(0.05 * SR)), int(0.25 * SR))
+    envv = np.clip(envv / (np.percentile(envv[envv > 1e-4], 90) + 1e-9), 0, 1)
+    mus *= (1 - 0.5 * envv)[:, None]
+    sf.write(os.path.join(ROOT, 'renders', 'music-stem.wav'), mus.astype(np.float32), SR, subtype='PCM_24')
+mix = vo + sfx_n * 0.8 + mus
 mix = pyln.normalize.loudness(mix, meter.integrated_loudness(mix), -14.0)
 ceil = 10 ** (-1.2 / 20)
 up = resample_poly(mix, 4, 1, axis=0)

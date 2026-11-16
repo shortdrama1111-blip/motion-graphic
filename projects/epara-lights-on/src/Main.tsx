@@ -170,17 +170,43 @@ const City: React.FC<{t: number}> = ({t}) => {
   );
 };
 
-const Dive: React.FC<{t: number}> = ({t}) => (
-  <Enter t={t} t0={B.dive}>
-    <Sequence from={Math.round(B.dive * B.fps)}><OffthreadVideo src={staticFile('clips/S3b.mp4')} muted playbackRate={B.diveRate} style={{width: W, height: H}} /></Sequence>
-  </Enter>
-);
+// the descent ends by pushing through the purple window's glass, straight into the room with the phone
+const WIN = [604, 926];
+const Dive: React.FC<{t: number}> = ({t}) => {
+  const p0 = B.phone2 - 0.7, p1 = B.phone2;
+  const u = seg(t, p0, p1);
+  const zoom = Math.exp(Math.log(7) * Math.pow(u, 2.2));           // accelerating push into the window
+  const glass = Math.exp(-((t - (p1 - 0.12)) ** 2) / 0.004);          // flare as we cross the glass
+  const sweep = seg(t, p1 - 0.45, p1 - 0.05);
+  return (
+    <Enter t={t} t0={B.dive}>
+      <AbsoluteFill style={{transform: `scale(${zoom})`, transformOrigin: `${WIN[0]}px ${WIN[1]}px`, filter: u > 0.5 ? `blur(${(u - 0.5) * 10}px)` : undefined}}>
+        <Sequence from={Math.round(B.dive * B.fps)}><OffthreadVideo src={staticFile('clips/S3b.mp4')} muted playbackRate={B.diveRate} style={{width: W, height: H}} /></Sequence>
+        {/* a reflection sliding across the window glass */}
+        {sweep > 0 && sweep < 1 ? (
+          <div style={{position: 'absolute', left: WIN[0] - 140, top: WIN[1] - 160, width: 280, height: 320, overflow: 'hidden'}}>
+            <div style={{position: 'absolute', top: -200, bottom: -200, width: 70, left: lerp(-150, 400, sweep), transform: 'rotate(22deg)',
+              background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,220,245,0.55), rgba(255,255,255,0))'}} />
+          </div>
+        ) : null}
+      </AbsoluteFill>
+      <AbsoluteFill style={{background: `radial-gradient(circle at ${WIN[0]}px ${WIN[1]}px, rgba(255,240,250,${glass}) 0%, rgba(214,120,220,${0.8 * glass}) 25%, rgba(91,42,155,${0.5 * glass}) 55%, rgba(0,0,0,0) 80%)`}} />
+    </Enter>
+  );
+};
 
-const Phone2: React.FC<{t: number}> = ({t}) => (
-  <Enter t={t} t0={B.phone2}>
-    <Sequence from={Math.round(B.phone2 * B.fps)}><OffthreadVideo src={staticFile('clips/S1b.mp4')} muted style={{width: W, height: H}} /></Sequence>
-  </Enter>
-);
+const Phone2: React.FC<{t: number}> = ({t}) => {
+  const u = eo3(seg(t, B.phone2, B.phone2 + 0.7));
+  const flash = Math.exp(-6 * Math.max(0, t - B.phone2));
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill style={{transform: `scale(${lerp(1.35, 1, u)})`, transformOrigin: '495px 1065px'}}>
+        <Sequence from={Math.round(B.phone2 * B.fps)}><OffthreadVideo src={staticFile('clips/S1b.mp4')} muted style={{width: W, height: H}} /></Sequence>
+      </AbsoluteFill>
+      <AbsoluteFill style={{background: `radial-gradient(circle at 495px 1065px, rgba(255,240,250,${flash}) 0%, rgba(214,120,220,${0.7 * flash}) 30%, rgba(91,42,155,${0.35 * flash}) 60%, rgba(0,0,0,0) 85%)`}} />
+    </AbsoluteFill>
+  );
+};
 
 const End: React.FC<{t: number}> = ({t}) => {
   const f = clamp(Math.floor((t - B.end) * B.fps), 0, 59);
@@ -248,8 +274,8 @@ export const Main: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => {
         {t >= B.towers && t < B.skim + 0.25 ? <Towers t={t} /> : null}
         {t >= B.skim && t < B.city + 0.25 ? <Skim t={t} /> : null}
         {t >= B.city && t < B.dive + 0.25 ? <City t={t} /> : null}
-        {t >= B.dive && t < B.phone2 + 0.25 ? <Dive t={t} /> : null}
-        {t >= B.phone2 && t < B.end + 0.25 ? <Phone2 t={t} /> : null}
+        {t >= B.dive && t < B.phone2 ? <Dive t={t} /> : null}
+        {t >= B.phone2 && t < B.end + 0.02 ? <Phone2 t={t} /> : null}
         {t >= B.end ? <End t={t} /> : null}
       </AbsoluteFill>
       <AbsoluteFill style={{background: 'radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.35) 100%)', opacity: 1 - seg(t, B.markMove, B.logoFull)}} />
