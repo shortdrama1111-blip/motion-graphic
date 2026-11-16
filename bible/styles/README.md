@@ -13,3 +13,4 @@ its preset; if none is named, ask or pick the one closest to the brand.
 | [liquid-glass](liquid-glass.md) | Frosted glass cards on drifting pastel blobs, calm | any | [ref: 2026-11-15-starter-kit-prompts] |
 | [editorial-grain](editorial-grain.md) | Printed magazine page, serif, grain, red accent | any | [ref: 2026-11-15-starter-kit-prompts] |
 | [pop-bold](pop-bold.md) | Flat loud colours, outlines, hard shadows, bouncy stickers | any | [ref: 2026-11-15-starter-kit-prompts] |
+| [dark-hero-stage](dark-hero-stage.md) | Near-black stage, warm drifting glow, bright big heroes, one accent line | any | [ref: 2026-11-16-amazon-a-to-z] |
