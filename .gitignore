@@ -6,3 +6,4 @@ node_modules/
 **/*-PRIVATE.*
 projects/*/build/lockup/
 projects/*/build/*.log
+projects/*/public/lockup/
